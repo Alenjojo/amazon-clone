@@ -14,6 +14,7 @@
 }
 
 .product_rating {
+    margin-top: -30px;
     display: flex;
 }
 
@@ -22,10 +23,11 @@
     width: 100%;
     object-fit: contain;
     margin-bottom: 15px;
+    margin-top: 10px;
 }
 
 .product > button {
-    background: darkorange;
+    background: #f7ac4a;
     border: 1px solid;
     margin-top: 10px;
     color: #111;
@@ -37,5 +39,5 @@
 }
 
 .product_price {
-    margin-top: 5px;
+    margin-top: -8px;
 }
