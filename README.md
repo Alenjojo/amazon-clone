@@ -1,3 +1,9 @@
+## Amazon-Clone
+This project is based on an Amazon app which is amazon.com.
+Hosted on Firebase at https://clone-f15f1.web.app/
+
+Screenshots:
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
