@@ -2,7 +2,8 @@
 This project is based on an Amazon app which is amazon.com.
 Hosted on Firebase at https://clone-f15f1.web.app/
 
-#Disclaimer:This project isn't mean't for any commercial use, just for developing and research purpose only
+# Disclaimer: 
+This project isn't mean't for any commercial use, just for developing and research purpose only
 Screenshots:
 ![1](https://user-images.githubusercontent.com/51394913/127476633-d4e864d7-9083-4db3-95e6-2fb83c1718d0.PNG)
 ![2](https://user-images.githubusercontent.com/51394913/127476654-b26d184f-02ef-4b7f-ad22-9c57f744988a.PNG)
