@@ -1,11 +1,58 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import CheckoutProduct from './CheckoutProduct';
 import { useStateValue } from './StateProvider'
 import './Payment.css'
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import {CardElement, useElements, useStripe} from '@stripe/react-stripe-js';
+import CurrencyFormat from 'react-currency-format';
+import { getBasketTotal } from './reducer';
+import axios from './axios';
 
 function Payment() {
     const [{ basket, user }, dispatch] = useStateValue();
+    const history = useHistory();
+
+    const stripe = useStripe();
+    const elements = useElements();
+
+    const [error, setError] = useState(null)
+    const [disabled, setDisabled] = useState(true);
+    const [succeeded, setsucceeded] = useState(false);
+    const [processing, setProcessing] = useState("");
+    const [clientSecret, setclientSecret] = useState(true);
+
+    useEffect(() => {
+        const getClientSecret = async () => {
+            const response = await axios({
+                method: 'post',
+                url: `/payments/create?total=${getBasketTotal(basket) * 100}`
+            });
+            setclientSecret(response.data.clientSecret);
+        }
+        getClientSecret();
+    }, [basket])
+
+    const handleSubmit = async (event) => {
+         event.preventDefault();
+         setProcessing(true);
+
+         const payload = await stripe.confirmCardPayment(clientSecret, {
+             payment_method: {
+                 card: elements.getElement(CardElement)
+             }
+         }).then(({paymentIntent }) => {
+             setsucceeded(true);
+             setError(null);
+             setProcessing(false);
+
+             history.replace('/ordes')
+        })
+    }
+
+    const handleChange = event => {
+         setDisabled(event.empty);
+         setError(event.error ? event.error.message : "");
+    }
 
     return (
         <div className='payment'>
@@ -18,7 +65,7 @@ function Payment() {
                     <div className='payment__title'>
                     <h3>Delivery Address</h3>
                     </div>
-                    <div className="payment__address">
+                    <div className='payment__address'>
                     <p>{user?.email}</p>
                     <p>206 Row Lane</p>
                     <p>React world</p>
@@ -26,7 +73,6 @@ function Payment() {
                 </div>
 
                 <div className='payment__section'>
-                    <div className='payment__section'>
                         <div className='payment__title'>
                             <h3>Reviewsss</h3>
                         </div>
@@ -41,7 +87,6 @@ function Payment() {
                         
                     ))}
                         </div>
-                    </div>
                 </div>
 
                 <div className='payment__section'>
@@ -49,7 +94,28 @@ function Payment() {
                         <h3>Payment Method</h3>
                     </div>
                     <div className='payment__details'>
+                        <form onSubmit={handleSubmit}>
+                        <CardElement onChange={handleChange}/>
 
+                         <div className="payment__priceContainer">
+                         <CurrencyFormat
+                            renderText={(value) => (
+                                <h3>Order Total: {value}</h3>
+                            )}
+                            decimalScale={2}
+                            value={getBasketTotal(basket)}
+                            displayType={"text"}
+                            thousandSeparator={true}
+                            prefix={"$"}
+                         />
+                         <button disabled={processing || disabled ||
+                        succeeded}>
+                            <span>{processing ? <p>Processing</p> :
+                            "But Now"}</span>
+                        </button>
+                         </div>
+                         {error && <div>{error}</div>}
+                        </form>
                     </div>
                 </div>
             </div>
