@@ -8,7 +8,6 @@ import { auth } from './firebase';
 
 function Header() {
     const [{ basket, user }, dispatch] = useStateValue();
-console.log("noww", user)
     const handleAuthentication = () => {
         if (user) {
             auth.signOut();
@@ -44,8 +43,8 @@ console.log("noww", user)
                         </span>
                     </div>
                 </Link>
-              
-                <div className="header_option">
+              <Link to='/orders'>
+              <div className="header_option">
                     <span className="header_optionLineOne">
                         Returns
                     </span>
@@ -53,6 +52,8 @@ console.log("noww", user)
                         Orders
                     </span>
                 </div>
+                </Link>
+
                 <div className="header_option">
                     <span className="header_optionLineOne">
                         Yours
