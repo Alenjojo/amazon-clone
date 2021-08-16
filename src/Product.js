@@ -1,11 +1,14 @@
+import { useSnackbar } from 'notistack';
 import React from 'react'
 import './Product.css'
 import { useStateValue } from './StateProvider'
 
-function Product({id,  title, image, price, rating }) {
+function Product({id, title, image, price, rating }) {
     const [{ basket }, dispatch] = useStateValue();
+    const { enqueueSnackbar } = useSnackbar();
 
     const addToBasket = () => {
+        enqueueSnackbar(`Added To Cart: ${title}`);
         dispatch({
             type: 'ADD_TO_BASKET',
             item: {

@@ -8,6 +8,10 @@ import CurrencyFormat from 'react-currency-format';
 import { getBasketTotal } from './reducer';
 import axios from './axios';
 import { db } from './firebase';
+import { useSnackbar } from 'notistack';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Backdrop from '@material-ui/core/Backdrop';
+import { makeStyles } from '@material-ui/core/styles';
 
 function Payment() {
     const [{ basket, user }, dispatch] = useStateValue();
@@ -22,6 +26,8 @@ function Payment() {
     const [processing, setProcessing] = useState("");
     const [clientSecret, setclientSecret] = useState(true);
 
+    const { enqueueSnackbar } = useSnackbar();
+
     useEffect(() => {
         const getClientSecret = async () => {
             const response = await axios({
@@ -31,11 +37,17 @@ function Payment() {
             setclientSecret(response.data.clientSecret);
         }
         getClientSecret();
-    }, [basket])
+        }, [basket])
 
     console.log('THe secret is >>>>', clientSecret)
 
+    const showsuccess = (variant) =>{
+        enqueueSnackbar('Your Payment was successful!', { variant });
+    }
+
     const handleSubmit = async (event) => {
+        setOpen(!open);
+        showsuccess('success');
          event.preventDefault();
          setProcessing(true);
 
@@ -63,7 +75,7 @@ function Payment() {
              dispatch({
                  type: 'EMPTY_BASKET'
              })
-
+             setOpen(false);
              history.replace('/orders')
         })
     }
@@ -73,8 +85,27 @@ function Payment() {
          setError(event.error ? event.error.message : "");
     }
 
+    const useStyles = makeStyles((theme) => ({
+        backdrop: {
+          zIndex: theme.zIndex.drawer + 1,
+          color: '#fff',
+        },
+      }));
+
+    const classes = useStyles();
+    const [open, setOpen] = React.useState(false);
+    const handleClose = () => {
+      setOpen(false);
+    };
+    const handleToggle = () => {
+      setOpen(!open);
+    };
+
     return (
         <div className='payment'>
+                <Backdrop className={classes.backdrop} open={open}>
+                <CircularProgress color="inherit" />
+                </Backdrop>
             <div className='payment__container'>
                 <h1>
                     Checkout ({<Link to="/checkout">{basket?.length} items</Link>})
@@ -102,7 +133,8 @@ function Payment() {
                             title={item.title}
                             image={item.image}
                             price={item.price}
-                            rating={item.rating} />
+                            rating={item.rating}
+                            hideButton />
                         
                     ))}
                         </div>
@@ -129,8 +161,11 @@ function Payment() {
                          />
                          <button disabled={processing || disabled ||
                         succeeded}>
-                            <span>{processing ? <p>Processing</p> :
-                            "But Now"}</span>
+                            <span>{processing ? 
+                            <div>
+                                <p>Processing</p>
+                            </div> :
+                            "Buy Now"}</span>
                         </button>
                          </div>
                          {error && <div>{error}</div>}
