@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./Home.css";
 import Product from "./Product";
-import { db } from "./firebase";
 import { useStateValue } from "./StateProvider";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { db } from "./firebase.js";
 
 function Home() {
   const [items, setItems] = useState([]);
@@ -10,15 +11,6 @@ function Home() {
   const [{ user }] = useStateValue();
 
   useEffect(() => {
-    // db.collection("items").doc().set(
-    //   {
-    //     name: "Acer Predator X35 1800R Curved 35 Inch UltraWide QHD Gaming Monitor I G-SYNC Ultimate I Quantum Dot I 200Hz",
-    //     price: "89999",
-    //     rating: "5",
-    //     img: "https://m.media-amazon.com/images/I/61PG4UvgJxS._AC_UL480_QL65_.jpg",
-    //   },
-    //   []
-    // );
     if (user) {
       getItems();
       getBanner();
@@ -29,25 +21,24 @@ function Home() {
   }, [user]);
 
   const getItems = () => {
-    db.collection("items")
-      .orderBy("price", "asc")
-      .onSnapshot((snapshot) =>
-        setItems(
-          snapshot.docs.map((doc) => ({
-            data: doc.data(),
-          }))
-        )
-      );
-  };
-
-  const getBanner = () => {
-    db.collection("banner").onSnapshot((snapshot) =>
-      setBanner(
+    const itemRef = collection(db, "items");
+    getDocs(query(itemRef, orderBy("price", "asc"))).then((snapshot) =>
+      setItems(
         snapshot.docs.map((doc) => ({
           data: doc.data(),
         }))
       )
     );
+  };
+
+  const getBanner = () => {
+    // db.collection("banner").onSnapshot((snapshot) =>
+    //   setBanner(
+    //     snapshot.docs.map((doc) => ({
+    //       data: doc.data(),
+    //     }))
+    //   )
+    // );
   };
 
   return (

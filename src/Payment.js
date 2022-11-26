@@ -7,11 +7,12 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import CurrencyFormat from "react-currency-format";
 import { getBasketTotal } from "./reducer";
 import axios from "./axios";
-import { db } from "./firebase";
 import { useSnackbar } from "notistack";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
 import { makeStyles } from "@material-ui/core/styles";
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
@@ -27,7 +28,6 @@ function Payment() {
   const [clientSecret, setclientSecret] = useState(true);
 
   const { enqueueSnackbar } = useSnackbar();
-
   useEffect(() => {
     const getClientSecret = async () => {
       const response = await axios({
@@ -58,15 +58,15 @@ function Payment() {
         },
       })
       .then(({ paymentIntent }) => {
-        db.collection("users")
-          .doc(user?.uid)
-          .collection("orders")
-          .doc(paymentIntent.id)
-          .set({
-            basket: basket,
-            amount: paymentIntent.amount,
-            created: paymentIntent.created,
-          });
+        // db.collection("users")
+        //   .doc(user?.uid)
+        //   .collection("orders")
+        //   .doc(paymentIntent.id)
+        //   .set({
+        //     basket: basket,
+        //     amount: paymentIntent.amount,
+        //     created: paymentIntent.created,
+        //   });
 
         setsucceeded(true);
         setError(null);

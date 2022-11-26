@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { db } from "./firebase";
 import { useStateValue } from "./StateProvider";
 import Order from "./Order";
 import "./Orders.css";
@@ -7,21 +6,20 @@ import "./Orders.css";
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [{ basket, user }, dispatch] = useStateValue();
-
   useState(() => {
     if (user) {
-      db.collection("users")
-        .doc(user?.uid)
-        .collection("orders")
-        .orderBy("name", "desc")
-        .onSnapshot((snapshot) =>
-          setOrders(
-            snapshot.docs.map((doc) => ({
-              id: doc.id,
-              data: doc.data(),
-            }))
-          )
-        );
+      // db.collection("users")
+      //   .doc(user?.uid)
+      //   .collection("orders")
+      //   .orderBy("name", "desc")
+      //   .onSnapshot((snapshot) =>
+      //     setOrders(
+      //       snapshot.docs.map((doc) => ({
+      //         id: doc.id,
+      //         data: doc.data(),
+      //       }))
+      //     )
+      //   );
     } else {
       setOrders([]);
     }
