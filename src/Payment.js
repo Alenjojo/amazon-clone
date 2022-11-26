@@ -11,8 +11,8 @@ import { useSnackbar } from "notistack";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
 import { makeStyles } from "@material-ui/core/styles";
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "./firebase.js";
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
@@ -58,15 +58,12 @@ function Payment() {
         },
       })
       .then(({ paymentIntent }) => {
-        // db.collection("users")
-        //   .doc(user?.uid)
-        //   .collection("orders")
-        //   .doc(paymentIntent.id)
-        //   .set({
-        //     basket: basket,
-        //     amount: paymentIntent.amount,
-        //     created: paymentIntent.created,
-        //   });
+        const itemRef = doc(db, "users", user?.uid, "orders", paymentIntent.id);
+        setDoc(itemRef, {
+          basket: basket,
+          amount: paymentIntent.amount,
+          created: paymentIntent.created,
+        });
 
         setsucceeded(true);
         setError(null);

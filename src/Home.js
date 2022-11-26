@@ -32,13 +32,14 @@ function Home() {
   };
 
   const getBanner = () => {
-    // db.collection("banner").onSnapshot((snapshot) =>
-    //   setBanner(
-    //     snapshot.docs.map((doc) => ({
-    //       data: doc.data(),
-    //     }))
-    //   )
-    // );
+    const bannerRef = collection(db, "banner");
+    getDocs(bannerRef).then((snapshot) =>
+      setBanner(
+        snapshot.docs.map((doc) => ({
+          data: doc.data(),
+        }))
+      )
+    );
   };
 
   return (

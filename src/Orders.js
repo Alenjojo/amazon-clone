@@ -2,24 +2,23 @@ import React, { useState } from "react";
 import { useStateValue } from "./StateProvider";
 import Order from "./Order";
 import "./Orders.css";
+import { getDocs, doc, collection } from "firebase/firestore";
+import { db } from "./firebase.js";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [{ basket, user }, dispatch] = useStateValue();
   useState(() => {
     if (user) {
-      // db.collection("users")
-      //   .doc(user?.uid)
-      //   .collection("orders")
-      //   .orderBy("name", "desc")
-      //   .onSnapshot((snapshot) =>
-      //     setOrders(
-      //       snapshot.docs.map((doc) => ({
-      //         id: doc.id,
-      //         data: doc.data(),
-      //       }))
-      //     )
-      //   );
+      const itemRef = collection(db, "users", user?.uid, "orders");
+      getDocs(itemRef).then((snapshot) =>
+        setOrders(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            data: doc.data(),
+          }))
+        )
+      );
     } else {
       setOrders([]);
     }
